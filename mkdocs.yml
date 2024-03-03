@@ -1,0 +1,6 @@
+site_name: "Digifarm API Documentation"
+docs_dir: 'docs'
+
+
+theme:
+    name: 'readthedocs'
