@@ -4,7 +4,7 @@ The On demand Deep resolution API service allows users to run deep-resolution co
 
 ## Base URL
 
-The URL for the On demand API is [https://api.digifarm.io/development/deep-resolution](https://api/digifarm.io/development/deep-resolution)
+The URL for the On demand API is [https://api.digifarm.io/deep-resolution](https://api/digifarm.io/deep-resolution)
 
 ## Authentication
 
@@ -30,6 +30,8 @@ Content-Type: application/json
 
 #### **Request Body**
 
+*   `client_token`: \[string, required\] The client token for authorization.
+
 *   `bbox`: \[object, required\] The bounding box coordinates.
 
     *   `x_min`: \[float, required\] The minimum longitude.
@@ -42,8 +44,6 @@ Content-Type: application/json
 *   `start_date`: \[string, optional\] The start date in ISO 8601 format
 
 *   `end_date`: \[string, optional\] The end date in ISO 8601 format 
-
-*   `client_token`: \[string, optional\] The client token for authorization.
 
 *   `callback_url`: \[string, required\] The URL to call with the results.
 
@@ -64,10 +64,12 @@ curl -X POST https://api.digifarm.io/deep-resolution/available_dates \
  "cloud_cover": 70,
  "start_date": "2023-10-01T00:00:00",
  "end_date": "2024-01-01T00:00:00",
- "client_token": "9ea17d0b-f837-4bab-9040-48277aa3d8f4",
+ "client_token": "********************************",
  "callback_url": "https://webhook.site/e6249d0a-ed68-4b71-9d09-dc694acb34e4"
  }'
 ```
+
+Initially you'll get an immediate feedback like the one below
 
 **Response**
 
@@ -83,8 +85,55 @@ curl -X POST https://api.digifarm.io/deep-resolution/available_dates \
 
 {
     "statusCode":200,
-    "data":{"message":"Fetching available dates, callback url will be called to https://webhook.site/e6249d0a-ed68-4b71-9d09-dc694acb34e4 when done"}
+    "data":
+        {
+            "message":"Fetching available dates, callback url will be called to https://webhook.site/eccf1ed3-d2b2-4190-bf86-62f08e9bda3a when done",
+            "version":"v1.0",
+            "timestamp":"2024-03-04T13:18:19.557515"
+        }
+```
+
+Later after successful execution, your endpoint will be called and you'll get the one below 
+
+```json
+
+{
+    "statusCode":200,
+    "data": {
+        "area_hectares": 924.1013977515,
+        "available_dates": [{
+            "cloud_cover": 1,
+            "data_source": "S2B_32VPN_20231001_0_L2A",
+            "date": "2023-10-01T00:00:00.000Z",
+            "mgrs": "32VPN"
+        },
+        {
+            "cloud_cover": 0.11560557173211615,
+            "data_source": "S2A_32VPN_20231002_0_L2A",
+            "date": "2023-10-02T00:00:00.000Z",
+            "mgrs": "32VPN"
+        },
+        {
+            "cloud_cover": 0.20893995435586685,
+            "data_source": "S2B_32VPN_20231004_0_L2A",
+            "date": "2023-10-04T00:00:00.000Z",
+            "mgrs": "32VPN"
+        },
+        {
+            "cloud_cover": 1,
+            "data_source": "S2A_32VPN_20231006_0_L2A",
+            "date": "2023-10-06T00:00:00.000Z",
+            "mgrs": "32VPN"
+        },
+        {
+            "cloud_cover": 1,
+            "data_source": "S2B_32VPN_20231007_0_L2A",
+            "date": "2023-10-07T00:00:00.000Z",
+            "mgrs": "32VPN"
+        },
+        ...],
     "version":"v1.0",
+    "status": "SUCCESS",
     "timesetamp":"2023-08-02T03:17:23.340688"
 }
 ```
@@ -106,6 +155,8 @@ Content-Type: application/json
 
 #### **Request Body**
 
+*   `client_token`: \[string, required\] The client token for authorization.
+
 *   `bbox`: \[object, required\] The bounding box coordinates.
 
     *   `x_min`: \[float, required\] The minimum longitude.
@@ -118,8 +169,6 @@ Content-Type: application/json
 *   `start_date`: \[string, optional\] The start date in ISO 8601 format
 
 *   `end_date`: \[string, optional\] The end date in ISO 8601 format 
-
-*   `client_token`: \[string, optional\] The client token for authorization.
 
 *   `callback_url`: \[string, required\] The URL to call with the results.
 
@@ -146,7 +195,7 @@ curl -X POST "https://api.digifarm.io/development/deep-resolution" \
  "cloud_cover": 70,
  "start_date": "2023-10-01T00:00:00",
  "end_date": "2024-01-01T00:00:00",
- "client_token": "9ea17d0b-f837-4bab-9040-48277aa3d8f4",
+ "client_token": "********************************",
  "callback_url": "https://webhook.site/e6249d0a-ed68-4b71-9d09-dc694acb34e4"
  }'
 ```
@@ -174,11 +223,47 @@ curl -X POST "https://api.digifarm.io/development/deep-resolution" \
 }
 ```
 
-### POST /deep-resolution/status/{job_id}
+Important to note that the processing endpoint (/deep-resolution) has a guard code to prevent AOIs larger or smaller than the current limit (min. 3 hectares, max. 25.000 hectares) and returns a specific error in those cases.
+
+**Example Request**
+
+```
+    curl -X POST "https://api.digifarm.io/deep-resolution" \
+        -H "Content-Type: application/json" \
+        -d '{
+        "bbox": {
+        "x_min": 0.0,
+        "y_min": 0.0,
+        "x_max": 0.15603603603603605,
+        "y_max": 0.15603603603603605
+        },
+        "cloud_cover": 70,
+        "data_cover": 70,
+        "start_date": "2023-10-01T00:00:00",
+        "end_date": "2024-01-01T00:00:00",
+        "client_token": "********************************",
+        "callback_url": "https://webhook.site/e9062ce5-f2a5-4f63-8f03-10696be609c9"
+    }'
+```
+
+```json
+
+{
+    "statusCode":200,
+    "data":{
+        "detail":"AOI must be between 3 and 25,000 hectares. Given area: 29969.1494036403 hectares."
+    },
+    "version":"v1.0",
+    "timesetamp":"2023-08-02T03:17:23.340688"
+}
+```
+
+
+### GET /deep-resolution/status/{job_id}
 
 This endpoint provides available dates for deep resolution imagery within a specified bounding box and time range.
 
-#### Request URL `POST https://api.digifarm.io/deep-resolution/status/{job_id}`
+#### Request URL `GET https://api.digifarm.io/deep-resolution/status/{job_id}`
 
 **Method**: GET
 
@@ -204,23 +289,28 @@ curl -X GET https://api.digifarm.io/deep-resolution/status/{job_id} \
 
 *   `statusCode`: \[string\] The status of the request.
 
-*   `message`: \[string\] A message describing the outcome of the request.
+*   `data`: \[object\] Dictionary contaning dates and job_id
+
+    *   `job_id`: \[string\] The minimum longitude.
+
+    *   `dates`: \[list\] The minimum longitude.
 
 *   `version`: \[string\] API version number
 
-*   `timestamp`: \[datetime\] The ID of the initiated task.
+*   `timestamp`: \[datetime\] The time of the initiated task.
 
 ```json
 
-{
+ {
     "statusCode":200,
-    "data":{
-        "job_id":"e6249d0a-ed68-4b71-9d09-dc694acb34e4",
-        "dates": []
-    }
-    "version":"v1.0",
-    "timesetamp":"2023-08-02T03:17:23.340688"
-}
+    "data":
+        {
+            "job_id":"494afe2a-5778-4e02-a341-36f4dca4a72b",
+            "dates":[
+                {"date":"2023-12-30T00:00:00.000Z","status":"FAILED"},{"date":"2023-12-26T00:00:00.000Z","status":"QUEUED"},{"date":"2023-12-23T00:00:00.000Z","status":"PROCESSED"},{"date":"2023-12-20T00:00:00.000Z","status":"FAILED"},{"date":"2023-12-16T00:00:00.000Z","status":"PROCESSED"},{"date":"2023-12-13T00:00:00.000Z","status":"PROCESSED"},{"date":"2023-12-10T00:00:00.000Z","status":"QUEUED"},{"date":"2023-12-06T00:00:00.000Z","status":"QUEUED"},{"date":"2023-12-03T00:00:00.000Z","status":"PROCESSED"},{"date":"2023-11-30T00:00:00.000Z","status":"QUEUED"}]},
+            "version":"v1.0",
+            "timestamp":"2024-03-02T21:49:03.882003"
+        }
 ```
 
 
@@ -284,7 +374,7 @@ json
 "timestamp": "Current timestamp"
 ```
 
-# Webhook Service
+# Webhook Service + Ondemand + Deep Resolution
 
 ## Overview
 
@@ -310,17 +400,30 @@ When a task is completed, a POST request will be sent to the specified `callback
 
 *   `data`: \[object\] The result of the task. This will be present if the task completed successfully.
 
+    *   `filename`: \[string\] The minimum longitude.
+
+    *   `link`: \[string\] Presigned S3 URL to download the output file
+
+    *   `job_id`: \[string\] Job ID of the requested  file
+
+    *   `status`: \[string\] Job ID of the requested  file
+
+    *   `timestamp`: \[string\] Current timestamp of the results
+
+    *   `version`: \[string\] Current version of the API
+
 ```
 {
     
     "statusCode":200,
     "data": {
-        "job_id": "fdj4hi8e-3ds4-kl3d-fk4d-4dk3ji8e9sdf",
-        "output":  "S3 download URL of the deep-resolution output in .zip format",
-        "version":"v1.0",
-        "timestamp": "[string] Time when the task was completed"
-     },
-    
+        "filename": "2023-11-21_MS.tif",
+        "job_id": "43288813-5b43-4b6b-a242-1fa35de35a04",
+        "link": "https://digi-data-v1.s3.amazonaws.com/partial-dr/070bd981-197e-4868-bd53-25871f62c76a/43288813-5b43-4b6b-a242-1fa35de35a04/32VPN/2023-11-21_MS.tif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAZG6BNOQIDEMAZT7N%2F20240303%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20240303T134949Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGUaDGV1LWNlbnRyYWwtMSJIMEYCIQDE1T0VMDp%2BmXcqnL2J5qlqxrZ2M%2F%2FulGLz8cZaW%2F%2FF%2BAIhAPb30hNjI1DMHO7LCsyKU55iFQ8K6XmTsKIRFnxtkbXqKsQDCF4QAhoMNjMzMzc2NDM3MjY0IgybLKgAEgxb6DB4Us8qoQNcmnPljLVvZSczUSjubZQXyYuVKo4HPMmcjEQUWVtvdjYy0YNJNJhGSrHWb0pPrsQSqEOvJoVH1WN%2BcK3EUKZ%2FM6t7u8Fi1kBakiBboAKbeWB7onA%2F9GCbcA%2BpAAk8Tlz5x34VZXqYF9fJA56cRvL53JPLo%2BPF9W6PPI%2FuDb%2B9sryGjXE18X5klaXNapUvZXlbc2imnM1ZFJA7fkHp3JFRZW%2BL72PALFwNBfYOBdQtz4eQZta%2Fs%2FZXXjuZ%2Fox3jiUbFPBlwyNs7nY0JMkxIcOzsOYct%2F6Qif3lwQ1%2FL6O0zw09oOdy1fwmJceVu0Bj9d%2FnHRFX90wMuBZ%2FLe0oh7eYY3hqWJa9BzM8Fv5OdNzvGLnx9bTLQ1TDfQl%2FA9eqshOv%2Bgj8nAsg9QZzKBz1X9uKJli7MGWxvYms43XChhjhh%2B%2FpkmRrWtXev3tJO9WJW6Z7iOeKvLf73Pa4YmtBxqgpBLqejmum80Uiu7zZSFDaUWUW5CXGVvC8lBuJ0Hz6HTEx7zjdQQ%2B0jrNUOlmctIjQ3r5y1obNKlMcwIOEtOhHW2QwsPCRrwY6nQEWWa2Wv2kP3pTj9ZxZGb56v8UoXlfqJseRlV0UXPMJxn8hclkLRPZ3M9jHQ6JcG4r7a9ByWrDGZDyd2fs%2FkF4ZKK6sjIABTdFH9mrKKCxaaEYrPS0JJ60hB2ybEgEHuBldA3BV5NHeGYr0fUP%2BcMxc9B4hI6t5W9neSUyRAlczkZyVDdnmqWrlDgn92mZgrcK1nuqxgT3tswEv8TLh&X-Amz-Signature=178e829de21ed7b4ebdeacb4034eb75f6b9e538ce737dbc64a5814fff43e1fb6",
+        "status": "success",
+        "timestamp": "2024-03-03T13:49:49.290596",
+        "version": "v1.0"
+    }
 }
 ```
 
@@ -373,7 +476,7 @@ If there's an error during the processing of the task, the webhook request will 
 
 ## FAQ
 
-**Q: What HTTP status codes should I return?** Our service considers any status code between 200 and 299 as a success. Other status codes will be considered as a failure, and we will retry the delivery.
+**Q: What HTTP status codes should I return?** Our service considers any status code between 200 and 299 as a success. Other status codes will be considered as a failure.
 
 **Q: How can I verify that the request came from your service?** We include a signature in each HTTP header. You can use this signature to verify that the request came from our service.
 
