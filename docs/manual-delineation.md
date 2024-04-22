@@ -47,7 +47,7 @@ X-Client-Token: The client token for authorization
 
 ```
 curl --location 'https://api.digifarm.io/manual-delineation' \
---header 'X-Client-Token: 9ea17d0b-f837-4bab-9040-48277aa3d8f4' \
+--header 'X-Client-Token: ae4eb3dc-2479-42c1-b359-b7f0565c6b69' \
 --header 'Content-Type: application/json' \
 --data '{
     "bbox": {
@@ -105,7 +105,7 @@ X-Client-Token: The client token for authorization
 
 ```
 curl --location 'https://api.digifarm.io/manual-delineation/831d92ff-bc9b-406d-90c3-9d14b8c67b2c/status' \
---header 'X-Client-Token: 9ea17d0b-f837-4bab-9040-48277aa3d8f4asdf'
+--header 'X-Client-Token: ae4eb3dc-2479-42c1-b359-b7f0565c6b69'
 ```
 
 #### **Response**
