@@ -47,7 +47,7 @@ X-Client-Token: The client token for authorization
 
 ```
 curl --location 'https://api.digifarm.io/manual-delineation' \
---header 'X-Client-Token: 9ea17d0b-f837-4bab-9040-48277aa3d8f4' \
+--header 'X-Client-Token: ae4eb3dc-2479-42c1-b359-b7f0565c6b69' \
 --header 'Content-Type: application/json' \
 --data '{
     "bbox": {
@@ -69,11 +69,17 @@ curl --location 'https://api.digifarm.io/manual-delineation' \
 
 *   `status`: \[string\] The status of the request.
 
+*   `timestamp`: \[datetime\] Current date and time.
+
+*   `version`: \[string\] API version number.
+
 ```json
 
 {
     "id": "831d92ff-bc9b-406d-90c3-9d14b8c67b2c",
-    "status": "QUEUED"
+    "status": "QUEUED",
+    "timestamp":"2024-05-29T08:45:34.054Z",
+    "version":"v1.0"
 }
 ```
 
@@ -83,10 +89,10 @@ This endpoint provides manual delineation job status.
 
 #### **Job Status**
 
-* `QUEUED`: Manual delineation team will start the process soon. 
-* `PROCESSING`: Manual delineation team already start the process.
+* `QUEUED`: Manual delineation process will start soon. 
+* `PROCESSING`: Manual delineation process already started.
 * `PROCESSED`: Manual delineation process complete.
-* `FAILED`: Manual delineation process failed.
+* `FAILED`: Manual delineation process fail.
 
 #### Request URL `https://api.digifarm.io/manual-delineation/{subscription_id}/status`
 
@@ -105,19 +111,26 @@ X-Client-Token: The client token for authorization
 
 ```
 curl --location 'https://api.digifarm.io/manual-delineation/831d92ff-bc9b-406d-90c3-9d14b8c67b2c/status' \
---header 'X-Client-Token: 9ea17d0b-f837-4bab-9040-48277aa3d8f4asdf'
+--header 'X-Client-Token: ae4eb3dc-2479-42c1-b359-b7f0565c6b69'
 ```
 
 #### **Response**
 
 *   `status`: \[string\] The status of the request.
-*   `presignedS3Url`: \[string\] If s3 file path available, provide the pre-sign s3 file URL otherwise this key will hide from the response.
+
+*   `file_link`: \[string\] If the manual delineation process is complete and S3 file downloadable link available, provide the pre-sign s3 file URL otherwise this key will hide from the response.
+
+*   `timestamp`: \[datetime\] Current date and time.
+
+*   `version`: \[string\] API version number.
 
 ```json
 
 {
-    "status": "QUEUED",
-    "presignedS3Url": "s3 file path"
+    "status": "PROCESSED",
+    "file_link": "S3 file downloadable link",
+    "timestamp":"2024-05-29T08:45:34.054Z",
+    "version":"v1.0"
 }
 ```
 
@@ -142,14 +155,25 @@ When a task is completed, a POST request will be sent to the specified `callback
 
 ## Request Body
 
-*   `presignedS3Url`: \[string\] S3 presigned url.
+*   `id`: \[string\] Subscription id.
+
+*   `file_name`: \[string\] File name.
+
+*   `file_link`: \[string\] S3 file downloadable link.
+
+*   `timestamp`: \[datetime\] Current date and time.
+
+*   `version`: \[string\] API version number.
 
 successfully.
 
 ```json
 {
-    
-   "presignedS3Url": "File path"
+    "id": "831d92ff-bc9b-406d-90c3-9d14b8c67b2c",
+    "file_name": "File name",
+    "file_link": "S3 file downloadable link",
+    "timestamp":"2024-05-29T08:45:34.054Z",
+    "version":"v1.0"
     
 }
 ```
