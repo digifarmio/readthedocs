@@ -183,7 +183,7 @@ Content-Type: application/json
 **Example Request**
 
 ```
-curl -X POST "https://api.digifarm.io/development/deep-resolution" \
+curl -X POST "https://api.digifarm.io/deep-resolution" \
  -H "Content-Type: application/json" \
  -d '{
  "bbox": {
@@ -215,11 +215,13 @@ curl -X POST "https://api.digifarm.io/development/deep-resolution" \
 {
     "statusCode":200,
     "data":{
-    { "message":"Job queued",
-      "job_id":"037d4b03-0b7a-46b5-b618-f81bdbe08739"
-    },
-    "version":"v1.0",
-    "timesetamp":"2023-08-02T03:17:23.340688"
+        {
+            "message":"Job queued",
+            "job_id":"037d4b03-0b7a-46b5-b618-f81bdbe08739"
+        },
+        "version":"v1.0",
+        "timesetamp":"2023-08-02T03:17:23.340688"
+    }
 }
 ```
 
@@ -276,13 +278,10 @@ client_token: \[string, required\] The client token for authorization.
 
 ```
 
-    <br/>
-
 **Example Request**
 
 ```
-curl -X GET https://api.digifarm.io/deep-resolution/status/{job_id} \
- -H "Content-Type: application/json" \
+curl -X GET "https://api.digifarm.io/deep-resolution/status/5fb2d945-adc2-41e0-9a26-d5ef0613cc43" -H "client_token: ********************************"
 ```
 
 **Response**
@@ -301,16 +300,31 @@ curl -X GET https://api.digifarm.io/deep-resolution/status/{job_id} \
 
 ```json
 
- {
-    "statusCode":200,
-    "data":
-        {
-            "job_id":"494afe2a-5778-4e02-a341-36f4dca4a72b",
-            "dates":[
-                {"date":"2023-12-30T00:00:00.000Z","status":"FAILED"},{"date":"2023-12-26T00:00:00.000Z","status":"QUEUED"},{"date":"2023-12-23T00:00:00.000Z","status":"PROCESSED"},{"date":"2023-12-20T00:00:00.000Z","status":"FAILED"},{"date":"2023-12-16T00:00:00.000Z","status":"PROCESSED"},{"date":"2023-12-13T00:00:00.000Z","status":"PROCESSED"},{"date":"2023-12-10T00:00:00.000Z","status":"QUEUED"},{"date":"2023-12-06T00:00:00.000Z","status":"QUEUED"},{"date":"2023-12-03T00:00:00.000Z","status":"PROCESSED"},{"date":"2023-11-30T00:00:00.000Z","status":"QUEUED"}]},
-            "version":"v1.0",
-            "timestamp":"2024-03-02T21:49:03.882003"
-        }
+    {
+        "statusCode": 200,
+        "data": {
+            "job_id": "5fb2d945-adc2-41e0-9a26-d5ef0613cc43",
+            "dates": [
+            {
+                "date": "2023-03-14T00:00:00.000Z",
+                "status": "PROCESSED",
+                "link": "https://digi-data-v1.s3.eu-central-1.amazonaws.com/partial-dr/16ecf247-3e11-43b9-add1-407771f2c7b5/5fb2d945-adc2-41e0-9a26-d5ef0613cc43/32TMK/2023-03-14_MS.tif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAZG6BNOQIGMVWC5LP%2F20240607%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20240607T092647Z&X-Amz-Expires=604800&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGIaDGV1LWNlbnRyYWwtMSJGMEQCICOLZjM%2FXryqUjH%2FUn68leQnAGSCDQDobAN5T%2BdLyAdtAiBpEnGfuBjEsPGL2yn1RvT1yuH%2FqTEcsRppMVLNNdGNMCq%2FAwjr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAIaDDYzMzM3NjQzNzI2NCIMotLmGKnY5s8GbfwZKpMDfUUa8tafcuQ3godhmP%2BdKnRKCYleRe6y%2BZkJq%2FFuRYNdEQQ1kiWW4EQgHNgExZqMrciLjNZfInXNR8VVa1bg2ZKPqtIMow%2F2OkpMzJV95NBqKvVauaUIqpQuVbtX1iThKzk%2FE6CO3xRLkc6hFiSHzuZ5kDfBu2xjbe8zitoZkChnW2Ret3ZMf6aLbexL0MIvyrn0oZcXPQhEXtERiuSiqagrQ3Df6lAsCpbSleqevgXerTpCPByzR0EVDwoJpJrTHZkz5EKxlTmrNdg2FLJbiIb%2Fa5F0dKnSvKbLt4dI2iAzM1e12V7mizQ7dMmHYk513HQ7SKS3PX8AgqDi0JlXCZmg5t6kSzoyqHFRAT2d8zCUHV0sh%2BNAhsKWpFoFkJni2x01LUBEpBm4H7FbQUB%2B39cwZlXjfOBtsF%2FiCDR7kp6zbthBGo5ysdHELntKRfy8TuQUPoLhLN%2F98xAM7ImfmuGw76sn6K%2FZsvczSaSZK9c%2FGvFyOEcdqunxgpBheN8FDc8UiWA%2F2TTbCG%2F4x0AieGbQ3zDKpIuzBjqfAQ9S9e8jpgzjMM4GO8fqyObbWONrbklkDyiMiDCZOOaunx2i2DvZ7Jz7E0nGO7ToXwzAvEb1qeNQAWWeHe4OJ8kQOw0oV6dkS15ObZHKlJTPvPqXOtJ5axP409KVnnzrPwTUqG0BAp4fCR5z%2BmOC1LkbjJo94AEhljmi8ewd5B9JkISrn1NJTHK9xT6SkucR8u92uqwUiyvbdfXOyRKRBw%3D%3D&X-Amz-Signature=c66d44b3afd56837ce20087b5f14f8674da5bdc60f52adf3c2fd7e7e54943abd&X-Amz-SignedHeaders=host"
+            },
+            {
+                "date": "2023-02-22T00:00:00.000Z",
+                "status": "PROCESSED",
+                "link": "https://digi-data-v1.s3.eu-central-1.amazonaws.com/partial-dr/16ecf247-3e11-43b9-add1-407771f2c7b5/5fb2d945-adc2-41e0-9a26-d5ef0613cc43/32TMK/2023-02-22_MS.tif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAZG6BNOQIGMVWC5LP%2F20240607%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20240607T092647Z&X-Amz-Expires=604800&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGIaDGV1LWNlbnRyYWwtMSJGMEQCICOLZjM%2FXryqUjH%2FUn68leQnAGSCDQDobAN5T%2BdLyAdtAiBpEnGfuBjEsPGL2yn1RvT1yuH%2FqTEcsRppMVLNNdGNMCq%2FAwjr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAIaDDYzMzM3NjQzNzI2NCIMotLmGKnY5s8GbfwZKpMDfUUa8tafcuQ3godhmP%2BdKnRKCYleRe6y%2BZkJq%2FFuRYNdEQQ1kiWW4EQgHNgExZqMrciLjNZfInXNR8VVa1bg2ZKPqtIMow%2F2OkpMzJV95NBqKvVauaUIqpQuVbtX1iThKzk%2FE6CO3xRLkc6hFiSHzuZ5kDfBu2xjbe8zitoZkChnW2Ret3ZMf6aLbexL0MIvyrn0oZcXPQhEXtERiuSiqagrQ3Df6lAsCpbSleqevgXerTpCPByzR0EVDwoJpJrTHZkz5EKxlTmrNdg2FLJbiIb%2Fa5F0dKnSvKbLt4dI2iAzM1e12V7mizQ7dMmHYk513HQ7SKS3PX8AgqDi0JlXCZmg5t6kSzoyqHFRAT2d8zCUHV0sh%2BNAhsKWpFoFkJni2x01LUBEpBm4H7FbQUB%2B39cwZlXjfOBtsF%2FiCDR7kp6zbthBGo5ysdHELntKRfy8TuQUPoLhLN%2F98xAM7ImfmuGw76sn6K%2FZsvczSaSZK9c%2FGvFyOEcdqunxgpBheN8FDc8UiWA%2F2TTbCG%2F4x0AieGbQ3zDKpIuzBjqfAQ9S9e8jpgzjMM4GO8fqyObbWONrbklkDyiMiDCZOOaunx2i2DvZ7Jz7E0nGO7ToXwzAvEb1qeNQAWWeHe4OJ8kQOw0oV6dkS15ObZHKlJTPvPqXOtJ5axP409KVnnzrPwTUqG0BAp4fCR5z%2BmOC1LkbjJo94AEhljmi8ewd5B9JkISrn1NJTHK9xT6SkucR8u92uqwUiyvbdfXOyRKRBw%3D%3D&X-Amz-Signature=bc2eba998d65b51a4d5c0827d51269e8089abac22f114d8fcdbca13c38987724&X-Amz-SignedHeaders=host"
+            },
+            {
+                "date": "2023-01-28T00:00:00.000Z",
+                "status": "PROCESSED",
+                "link": "https://digi-data-v1.s3.eu-central-1.amazonaws.com/partial-dr/16ecf247-3e11-43b9-add1-407771f2c7b5/5fb2d945-adc2-41e0-9a26-d5ef0613cc43/32TMK/2023-01-28_MS.tif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAZG6BNOQIGMVWC5LP%2F20240607%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20240607T092647Z&X-Amz-Expires=604800&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGIaDGV1LWNlbnRyYWwtMSJGMEQCICOLZjM%2FXryqUjH%2FUn68leQnAGSCDQDobAN5T%2BdLyAdtAiBpEnGfuBjEsPGL2yn1RvT1yuH%2FqTEcsRppMVLNNdGNMCq%2FAwjr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAIaDDYzMzM3NjQzNzI2NCIMotLmGKnY5s8GbfwZKpMDfUUa8tafcuQ3godhmP%2BdKnRKCYleRe6y%2BZkJq%2FFuRYNdEQQ1kiWW4EQgHNgExZqMrciLjNZfInXNR8VVa1bg2ZKPqtIMow%2F2OkpMzJV95NBqKvVauaUIqpQuVbtX1iThKzk%2FE6CO3xRLkc6hFiSHzuZ5kDfBu2xjbe8zitoZkChnW2Ret3ZMf6aLbexL0MIvyrn0oZcXPQhEXtERiuSiqagrQ3Df6lAsCpbSleqevgXerTpCPByzR0EVDwoJpJrTHZkz5EKxlTmrNdg2FLJbiIb%2Fa5F0dKnSvKbLt4dI2iAzM1e12V7mizQ7dMmHYk513HQ7SKS3PX8AgqDi0JlXCZmg5t6kSzoyqHFRAT2d8zCUHV0sh%2BNAhsKWpFoFkJni2x01LUBEpBm4H7FbQUB%2B39cwZlXjfOBtsF%2FiCDR7kp6zbthBGo5ysdHELntKRfy8TuQUPoLhLN%2F98xAM7ImfmuGw76sn6K%2FZsvczSaSZK9c%2FGvFyOEcdqunxgpBheN8FDc8UiWA%2F2TTbCG%2F4x0AieGbQ3zDKpIuzBjqfAQ9S9e8jpgzjMM4GO8fqyObbWONrbklkDyiMiDCZOOaunx2i2DvZ7Jz7E0nGO7ToXwzAvEb1qeNQAWWeHe4OJ8kQOw0oV6dkS15ObZHKlJTPvPqXOtJ5axP409KVnnzrPwTUqG0BAp4fCR5z%2BmOC1LkbjJo94AEhljmi8ewd5B9JkISrn1NJTHK9xT6SkucR8u92uqwUiyvbdfXOyRKRBw%3D%3D&X-Amz-Signature=2063af4c6829b2c1ae34f030e24acb19f04fb4e5f4e9d85de38a55ec07ceca36&X-Amz-SignedHeaders=host"
+            }
+            ]
+        },
+        "version": "v1.0",
+        "timestamp": "2024-06-07T09:26:47.881040"
+    }
 ```
 
 
