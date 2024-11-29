@@ -30,12 +30,16 @@ Content-Type: application/json
 
 #### **Request Body**
 
-*   `bbox`: \[object, required\] The bounding box coordinates.
+*   `bbox`: \[object, optional\] The bounding box coordinates.
 
     *   `x_min`: \[float, required\] The minimum longitude.
     *   `y_min`: \[float, required\] The minimum latitude.
     *   `x_max`: \[float, required\] The maximum longitude.
     *   `y_max`: \[float, required\] The maximum latitude.
+
+*   `aoi`: \[object, optional\] The GeoJSON format. We have only enabled Polygon and MultiPolygon single geometry GeoJson functionality for our API. Check the valid GeoJSON instructions [here](#instructions-for-Polygon-FeatureCollection).
+
+**_NOTE:_** At least need to provide either bbox or aoi. If provide both aoi and bbox, aoi has more precedence. 
 
 *   `cloud_cover`: \[integer, required\] The maximum allowed cloud cover percentage.
 
@@ -61,10 +65,11 @@ curl -X POST https://api.digifarm.io/deep-resolution/available_dates \
     "x_max": 11.21197326267199,
     "y_max": 60.75331374707744
  },
+ "aoi": { "type": "Feature", "properties": { "id": 1 }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 138.629423808807388, 35.396884261237581 ], [ 138.627417448995601, 35.396586287008105 ], [ 138.627417448995601, 35.396586287008105 ], [ 138.626682445896222, 35.39814568547569 ], [ 138.627169137137685, 35.399148865381584 ], [ 138.627477043841481, 35.399446839611059 ], [ 138.627993532505911, 35.399466704559693 ], [ 138.628281574261081, 35.399516366931273 ], [ 138.62859941343919, 35.399367379816532 ], [ 138.628807995399796, 35.398989945792529 ], [ 138.629125834577906, 35.398801228780535 ], [ 138.629821107780032, 35.398890621049375 ], [ 138.630417056238969, 35.398890621049375 ], [ 138.631161991812661, 35.398413862282212 ], [ 138.63163875057981, 35.398552916922633 ], [ 138.631608953156871, 35.398890621049375 ], [ 138.631241451607195, 35.399029675689796 ], [ 138.630844152634552, 35.399466704559693 ], [ 138.629890635100224, 35.399655421571694 ], [ 138.62936421396148, 35.400360627248112 ], [ 138.629523133550549, 35.400787723643695 ], [ 138.629632390768023, 35.40094664323275 ], [ 138.629602593345084, 35.401135360244751 ], [ 138.629185429423814, 35.4013538746797 ], [ 138.629016577360431, 35.401473064371487 ], [ 138.628976847463179, 35.401721376229382 ], [ 138.629562863447802, 35.402416649431487 ], [ 138.630019757266325, 35.402645096340756 ], [ 138.631013004697934, 35.402913273147277 ], [ 138.631350708824669, 35.4033006396456 ], [ 138.631946657283606, 35.402823880878437 ], [ 138.63195658975792, 35.402645096340756 ], [ 138.632075779449707, 35.402257729842439 ], [ 138.632701525331612, 35.401502861794434 ], [ 138.633625245442971, 35.401542591691694 ], [ 138.633486190802557, 35.401880295818437 ], [ 138.633595448020031, 35.402088877779065 ], [ 138.634529100605732, 35.403211247376753 ], [ 138.634469505759824, 35.40478057831865 ], [ 138.634688020194773, 35.404949430382025 ], [ 138.635552145460252, 35.405038822650866 ], [ 138.636356675879824, 35.405446054097816 ], [ 138.636585122789086, 35.405058687599499 ], [ 138.636465933097298, 35.404830240690231 ], [ 138.636942691864476, 35.404125035013813 ], [ 138.636833434647002, 35.40379726336139 ], [ 138.636654650109307, 35.403608546349389 ], [ 138.637886276924462, 35.402436514380121 ], [ 138.636604987737712, 35.398155617950003 ], [ 138.629423808807388, 35.396884261237581 ] ] ] ] } },
  "cloud_cover": 70,
  "start_date": "2023-10-01T00:00:00",
  "end_date": "2024-01-01T00:00:00",
- "client_token": "9ea17d0b-f837-4bab-9040-48277aa3d8f4",
+ "client_token": "********************************",
  "callback_url": "https://webhook.site/e6249d0a-ed68-4b71-9d09-dc694acb34e4"
  }'
 ```
@@ -80,10 +85,11 @@ curl -X POST https://api.digifarm.io/deep-resolution/available_dates \
 *   `timestamp`: \[datetime\] The ID of the initiated task.
 
 ```json
-
 {
     "statusCode":200,
-    "data":{"message":"Fetching available dates, callback url will be called to https://webhook.site/e6249d0a-ed68-4b71-9d09-dc694acb34e4 when done"}
+    "data": {
+        "message":"Fetching available dates, callback url will be called to https://webhook.site/e6249d0a-ed68-4b71-9d09-dc694acb34e4 when done"
+    },
     "version":"v1.0",
     "timesetamp":"2023-08-02T03:17:23.340688"
 }
@@ -106,12 +112,16 @@ Content-Type: application/json
 
 #### **Request Body**
 
-*   `bbox`: \[object, required\] The bounding box coordinates.
+*   `bbox`: \[object, optional\] The bounding box coordinates.
 
     *   `x_min`: \[float, required\] The minimum longitude.
     *   `y_min`: \[float, required\] The minimum latitude.
     *   `x_max`: \[float, required\] The maximum longitude.
     *   `y_max`: \[float, required\] The maximum latitude.
+
+*   `aoi`: \[object, optional\] The GeoJSON format. We have only enabled Polygon and MultiPolygon single geometry GeoJson functionality for our API. Check the valid GeoJSON instructions [here](#instructions-for-Polygon-FeatureCollection).
+
+**_NOTE:_** At least need to provide either bbox or aoi. If provide both aoi and bbox, aoi has more precedence.
 
 *   `cloud_cover`: \[integer, required\] The maximum allowed cloud cover percentage.
 
@@ -134,7 +144,7 @@ Content-Type: application/json
 **Example Request**
 
 ```
-curl -X POST "https://api.digifarm.io/development/deep-resolution" \
+curl -X POST "https://api.digifarm.io/deep-resolution" \
  -H "Content-Type: application/json" \
  -d '{
  "bbox": {
@@ -143,10 +153,11 @@ curl -X POST "https://api.digifarm.io/development/deep-resolution" \
     "x_max": 11.21197326267199,
     "y_max": 60.75331374707744
  },
+ "aoi": { "type": "Feature", "properties": { "id": 1 }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 138.629423808807388, 35.396884261237581 ], [ 138.627417448995601, 35.396586287008105 ], [ 138.627417448995601, 35.396586287008105 ], [ 138.626682445896222, 35.39814568547569 ], [ 138.627169137137685, 35.399148865381584 ], [ 138.627477043841481, 35.399446839611059 ], [ 138.627993532505911, 35.399466704559693 ], [ 138.628281574261081, 35.399516366931273 ], [ 138.62859941343919, 35.399367379816532 ], [ 138.628807995399796, 35.398989945792529 ], [ 138.629125834577906, 35.398801228780535 ], [ 138.629821107780032, 35.398890621049375 ], [ 138.630417056238969, 35.398890621049375 ], [ 138.631161991812661, 35.398413862282212 ], [ 138.63163875057981, 35.398552916922633 ], [ 138.631608953156871, 35.398890621049375 ], [ 138.631241451607195, 35.399029675689796 ], [ 138.630844152634552, 35.399466704559693 ], [ 138.629890635100224, 35.399655421571694 ], [ 138.62936421396148, 35.400360627248112 ], [ 138.629523133550549, 35.400787723643695 ], [ 138.629632390768023, 35.40094664323275 ], [ 138.629602593345084, 35.401135360244751 ], [ 138.629185429423814, 35.4013538746797 ], [ 138.629016577360431, 35.401473064371487 ], [ 138.628976847463179, 35.401721376229382 ], [ 138.629562863447802, 35.402416649431487 ], [ 138.630019757266325, 35.402645096340756 ], [ 138.631013004697934, 35.402913273147277 ], [ 138.631350708824669, 35.4033006396456 ], [ 138.631946657283606, 35.402823880878437 ], [ 138.63195658975792, 35.402645096340756 ], [ 138.632075779449707, 35.402257729842439 ], [ 138.632701525331612, 35.401502861794434 ], [ 138.633625245442971, 35.401542591691694 ], [ 138.633486190802557, 35.401880295818437 ], [ 138.633595448020031, 35.402088877779065 ], [ 138.634529100605732, 35.403211247376753 ], [ 138.634469505759824, 35.40478057831865 ], [ 138.634688020194773, 35.404949430382025 ], [ 138.635552145460252, 35.405038822650866 ], [ 138.636356675879824, 35.405446054097816 ], [ 138.636585122789086, 35.405058687599499 ], [ 138.636465933097298, 35.404830240690231 ], [ 138.636942691864476, 35.404125035013813 ], [ 138.636833434647002, 35.40379726336139 ], [ 138.636654650109307, 35.403608546349389 ], [ 138.637886276924462, 35.402436514380121 ], [ 138.636604987737712, 35.398155617950003 ], [ 138.629423808807388, 35.396884261237581 ] ] ] ] } },
  "cloud_cover": 70,
  "start_date": "2023-10-01T00:00:00",
  "end_date": "2024-01-01T00:00:00",
- "client_token": "9ea17d0b-f837-4bab-9040-48277aa3d8f4",
+ "client_token": "********************************",
  "callback_url": "https://webhook.site/e6249d0a-ed68-4b71-9d09-dc694acb34e4"
  }'
 ```
@@ -166,8 +177,8 @@ curl -X POST "https://api.digifarm.io/development/deep-resolution" \
 {
     "statusCode":200,
     "data":{
-    { "message":"Job queued",
-      "job_id":"037d4b03-0b7a-46b5-b618-f81bdbe08739"
+        "message":"Job queued",
+        "job_id":"037d4b03-0b7a-46b5-b618-f81bdbe08739"
     },
     "version":"v1.0",
     "timesetamp":"2023-08-02T03:17:23.340688"
@@ -369,6 +380,118 @@ If there's an error during the processing of the task, the webhook request will 
         "timestamp": "Current timestamp"
     },
 },
+```
+
+### Instructions for valid GeoJSON Format
+
+###### Instructions for Polygon Feature
+
+1. Coordinates length should always be one. 
+2. There should not be more than one feature.
+3. There should always be only one geometry type.
+
+```json
+{
+    "type": "Feature",
+    "properties": {},
+    "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+            [
+                [],
+                [],
+                [],
+                []
+            ]
+        ]
+    }
+}
+```
+
+###### Instructions for MultiPolygon FeatureCollection
+
+1. Coordinates length should always be one and should be in the provided format.
+2. There should not be more than one feature.
+3. There should always be only one geometry type.
+
+```json
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+                "coordinates": [
+                    [
+                        [
+                            [],
+                            [],
+                            [],
+                            []
+                        ]
+                    ]
+                ],
+                "type": "MultiPolygon"
+            }
+        }
+    ]
+}
+```
+
+###### Instructions for MultiPolygon Feature
+
+1. Coordinates length should always be one and should be in the provided format.
+2. There should not be more than one feature.
+3. There should always be only one geometry type.
+
+```json
+{
+    "type": "Feature",
+    "properties": {},
+    "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+            [
+                [
+                    [],
+                    [],
+                    [],
+                    []
+                ]
+            ]
+        ]
+    }
+}
+```
+
+###### Instructions for Polygon FeatureCollection
+1. Coordinates length should always be one.
+2. There should not be more than one feature.
+3. There should always be only one geometry type.
+
+
+```json
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+                "coordinates": [
+                    [
+                        [],
+                        [],
+                        [],
+                        []
+                    ]
+                ],
+                "type": "Polygon"
+            }
+        }
+    ]
+}
 ```
 
 ## FAQ

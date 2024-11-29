@@ -87,7 +87,6 @@ Initially you'll get an immediate feedback like the one below
 *   `timestamp`: \[datetime\] The ID of the initiated task.
 
 ```json
-
 {
     "statusCode":200,
     "data":
