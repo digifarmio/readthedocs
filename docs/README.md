@@ -37,7 +37,7 @@ Content-Type: application/json
     *   `x_max`: \[float, required\] The maximum longitude.
     *   `y_max`: \[float, required\] The maximum latitude.
 
-*   `aoi`: \[object, optional\] The GeoJSON format. We have only enabled Polygon and MultiPolygon single geometry GeoJson functionality for our API. Check the valid GeoJSON instructions [here](#instructions-for-Polygon-FeatureCollection).
+*   `aoi`: \[object, optional\] The GeoJSON format. We have only enabled Polygon and MultiPolygon single geometry GeoJson functionality for our API. Check the valid GeoJSON instructions [here](#instructions-for-valid-geojson-format).
 
 **_NOTE:_** At least need to provide either bbox or aoi. If provide both aoi and bbox, aoi has more precedence. 
 
@@ -119,7 +119,7 @@ Content-Type: application/json
     *   `x_max`: \[float, required\] The maximum longitude.
     *   `y_max`: \[float, required\] The maximum latitude.
 
-*   `aoi`: \[object, optional\] The GeoJSON format. We have only enabled Polygon and MultiPolygon single geometry GeoJson functionality for our API. Check the valid GeoJSON instructions [here](#instructions-for-Polygon-FeatureCollection).
+*   `aoi`: \[object, optional\] The GeoJSON format. We have only enabled Polygon and MultiPolygon single geometry GeoJson functionality for our API. Check the valid GeoJSON instructions [here](#instructions-for-valid-geojson-format).
 
 **_NOTE:_** At least need to provide either bbox or aoi. If provide both aoi and bbox, aoi has more precedence.
 
@@ -382,6 +382,8 @@ If there's an error during the processing of the task, the webhook request will 
 },
 ```
 
+<br />
+
 ### Instructions for valid GeoJSON Format
 
 ###### Instructions for Polygon Feature
@@ -493,6 +495,8 @@ If there's an error during the processing of the task, the webhook request will 
     ]
 }
 ```
+
+<br />
 
 ## FAQ
 
