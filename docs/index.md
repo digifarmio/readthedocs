@@ -178,7 +178,7 @@ Content-Type: application/json
 
 *   `interval`: \[integer, optional\]  The frequency of image processing, in days. If the interval is not provided, the system will check available images every day.
 
-*   `start_date`: \[string, optional\] The start date in ISO 8601 format. If start_date is not provided in the request body, the system will assume the current date is the start_date
+*   `start_date`: \[string, optional\] The start date in ISO 8601 format. If start_date is not provided in the request body, the system will assume the current date is the start_date.
 
 *   `end_date`: \[string, optional\] The end date in ISO 8601 format. It possible to provide future date as end_date. System will look for new image after every interval day.
 
@@ -186,8 +186,10 @@ Content-Type: application/json
 
 *   `dates`: \[list of string, optional\] The dates to use for processing the area of interest.
 
+**_IMPORTANT:_** 
 * At least dates is required, or, alternatively, end_date.
-** If start_date and end_date are provided, all available dates in between will be processed.
+* If start_date and end_date are provided, all available dates in between will be processed.
+* If any future date provide as `end_date`, automatically image will process after every `interval` day based on the cloud cover.
 
 
     <br/>
@@ -284,7 +286,7 @@ This endpoint provides available dates for deep resolution imagery within a spec
 ```
 Content-Type: application/json
 
-client_token: \[string, required\] The client token for authorization.
+client_token: [string, required] The client token for authorization.
 
 ```
 
@@ -302,13 +304,15 @@ curl -X GET "https://api.digifarm.io/deep-resolution/status/5fb2d945-adc2-41e0-9
 
     *   `job_id`: \[string\] The job id.
 
-    *   `status`: \[string\] The status of job. It can be ACTIVE or CANCEL.
+    *   `status`: \[string\] The status of job. It can be ACTIVE or CANCELLED.
 
     *   `dates`: \[list\] The list of requested image.
 
 *   `version`: \[string\] API version number
 
 *   `timestamp`: \[datetime\] The time of the initiated task.
+
+**_NOTE:_** The job status will be ACTIVE if the system is still looking for new images. If the user cancels the job using the cancel API, the status will be CANCELLED. Otherwise, if all processes are completed, the system will remove the status value from the response payload.
 
 ```json
 
@@ -353,7 +357,7 @@ This endpoint provides the ability to cancel any image requests.
 ```
 Content-Type: application/json
 
-client_token: \[string, required\] The client token for authorization.
+client_token: [string, required] The client token for authorization.
 
 ```
 
