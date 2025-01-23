@@ -176,15 +176,17 @@ Content-Type: application/json
 
 *   `cloud_cover`: \[integer, required\] The maximum allowed cloud cover percentage.
 
-*   `start_date`: \[string, optional\] The start date in ISO 8601 format
+*   `interval`: \[integer, optional\]  The frequency of image processing, in days. If the interval is not provided, the system will check available images every day.
 
-*   `end_date`: \[string, optional\] The end date in ISO 8601 format 
+*   `start_date`: \[string, optional\] The start date in ISO 8601 format. If start_date is not provided in the request body, the system will assume the current date is the start_date
+
+*   `end_date`: \[string, optional\] The end date in ISO 8601 format. It possible to provide future date as end_date. System will look for new image after every interval day.
 
 *   `callback_url`: \[string, required\] The URL to call with the results.
 
 *   `dates`: \[list of string, optional\] The dates to use for processing the area of interest.
 
-* At least dates is required, or, alternatively, start_date and end_date.
+* At least dates is required, or, alternatively, end_date.
 ** If start_date and end_date are provided, all available dates in between will be processed.
 
 
@@ -204,7 +206,7 @@ curl -X POST "https://api.digifarm.io/deep-resolution" \
  },
  "aoi": { "type": "Feature", "properties": { "id": 1 }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 138.629423808807388, 35.396884261237581 ], [ 138.627417448995601, 35.396586287008105 ], [ 138.627417448995601, 35.396586287008105 ], [ 138.626682445896222, 35.39814568547569 ], [ 138.627169137137685, 35.399148865381584 ], [ 138.627477043841481, 35.399446839611059 ], [ 138.627993532505911, 35.399466704559693 ], [ 138.628281574261081, 35.399516366931273 ], [ 138.62859941343919, 35.399367379816532 ], [ 138.628807995399796, 35.398989945792529 ], [ 138.629125834577906, 35.398801228780535 ], [ 138.629821107780032, 35.398890621049375 ], [ 138.630417056238969, 35.398890621049375 ], [ 138.631161991812661, 35.398413862282212 ], [ 138.63163875057981, 35.398552916922633 ], [ 138.631608953156871, 35.398890621049375 ], [ 138.631241451607195, 35.399029675689796 ], [ 138.630844152634552, 35.399466704559693 ], [ 138.629890635100224, 35.399655421571694 ], [ 138.62936421396148, 35.400360627248112 ], [ 138.629523133550549, 35.400787723643695 ], [ 138.629632390768023, 35.40094664323275 ], [ 138.629602593345084, 35.401135360244751 ], [ 138.629185429423814, 35.4013538746797 ], [ 138.629016577360431, 35.401473064371487 ], [ 138.628976847463179, 35.401721376229382 ], [ 138.629562863447802, 35.402416649431487 ], [ 138.630019757266325, 35.402645096340756 ], [ 138.631013004697934, 35.402913273147277 ], [ 138.631350708824669, 35.4033006396456 ], [ 138.631946657283606, 35.402823880878437 ], [ 138.63195658975792, 35.402645096340756 ], [ 138.632075779449707, 35.402257729842439 ], [ 138.632701525331612, 35.401502861794434 ], [ 138.633625245442971, 35.401542591691694 ], [ 138.633486190802557, 35.401880295818437 ], [ 138.633595448020031, 35.402088877779065 ], [ 138.634529100605732, 35.403211247376753 ], [ 138.634469505759824, 35.40478057831865 ], [ 138.634688020194773, 35.404949430382025 ], [ 138.635552145460252, 35.405038822650866 ], [ 138.636356675879824, 35.405446054097816 ], [ 138.636585122789086, 35.405058687599499 ], [ 138.636465933097298, 35.404830240690231 ], [ 138.636942691864476, 35.404125035013813 ], [ 138.636833434647002, 35.40379726336139 ], [ 138.636654650109307, 35.403608546349389 ], [ 138.637886276924462, 35.402436514380121 ], [ 138.636604987737712, 35.398155617950003 ], [ 138.629423808807388, 35.396884261237581 ] ] ] ] } },
  "cloud_cover": 70,
- "start_date": "2023-10-01T00:00:00",
+ "interval": 5
  "end_date": "2024-01-01T00:00:00",
  "client_token": "********************************",
  "callback_url": "https://webhook.site/e6249d0a-ed68-4b71-9d09-dc694acb34e4"
@@ -222,17 +224,14 @@ curl -X POST "https://api.digifarm.io/deep-resolution" \
 *   `timestamp`: \[datetime\] The ID of the initiated task.
 
 ```json
-
 {
     "statusCode":200,
-    "data":{
-        {
-            "message":"Job queued",
-            "job_id":"037d4b03-0b7a-46b5-b618-f81bdbe08739"
-        },
-        "version":"v1.0",
-        "timesetamp":"2023-08-02T03:17:23.340688"
-    }
+    "data": {
+        "message":"Job queued",
+        "job_id":"037d4b03-0b7a-46b5-b618-f81bdbe08739"
+    },
+    "version":"v1.0",
+    "timesetamp":"2023-08-02T03:17:23.340688"
 }
 ```
 
@@ -301,9 +300,11 @@ curl -X GET "https://api.digifarm.io/deep-resolution/status/5fb2d945-adc2-41e0-9
 
 *   `data`: \[object\] Dictionary contaning dates and job_id
 
-    *   `job_id`: \[string\] The minimum longitude.
+    *   `job_id`: \[string\] The job id.
 
-    *   `dates`: \[list\] The minimum longitude.
+    *   `status`: \[string\] The status of job. It can be ACTIVE or CANCEL.
+
+    *   `dates`: \[list\] The list of requested image.
 
 *   `version`: \[string\] API version number
 
@@ -316,21 +317,21 @@ curl -X GET "https://api.digifarm.io/deep-resolution/status/5fb2d945-adc2-41e0-9
         "data": {
             "job_id": "5fb2d945-adc2-41e0-9a26-d5ef0613cc43",
             "dates": [
-            {
-                "date": "2023-03-14T00:00:00.000Z",
-                "status": "PROCESSED",
-                "link": "https://digi-data-v1.s3.eu-central-1.amazonaws.com/partial-dr/16ecf247-3e11-43b9-add1-407771f2c7b5/5fb2d945-adc2-41e0-9a26-d5ef0613cc43/32TMK/2023-03-14_MS.tif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAZG6BNOQIGMVWC5LP%2F20240607%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20240607T092647Z&X-Amz-Expires=604800&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGIaDGV1LWNlbnRyYWwtMSJGMEQCICOLZjM%2FXryqUjH%2FUn68leQnAGSCDQDobAN5T%2BdLyAdtAiBpEnGfuBjEsPGL2yn1RvT1yuH%2FqTEcsRppMVLNNdGNMCq%2FAwjr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAIaDDYzMzM3NjQzNzI2NCIMotLmGKnY5s8GbfwZKpMDfUUa8tafcuQ3godhmP%2BdKnRKCYleRe6y%2BZkJq%2FFuRYNdEQQ1kiWW4EQgHNgExZqMrciLjNZfInXNR8VVa1bg2ZKPqtIMow%2F2OkpMzJV95NBqKvVauaUIqpQuVbtX1iThKzk%2FE6CO3xRLkc6hFiSHzuZ5kDfBu2xjbe8zitoZkChnW2Ret3ZMf6aLbexL0MIvyrn0oZcXPQhEXtERiuSiqagrQ3Df6lAsCpbSleqevgXerTpCPByzR0EVDwoJpJrTHZkz5EKxlTmrNdg2FLJbiIb%2Fa5F0dKnSvKbLt4dI2iAzM1e12V7mizQ7dMmHYk513HQ7SKS3PX8AgqDi0JlXCZmg5t6kSzoyqHFRAT2d8zCUHV0sh%2BNAhsKWpFoFkJni2x01LUBEpBm4H7FbQUB%2B39cwZlXjfOBtsF%2FiCDR7kp6zbthBGo5ysdHELntKRfy8TuQUPoLhLN%2F98xAM7ImfmuGw76sn6K%2FZsvczSaSZK9c%2FGvFyOEcdqunxgpBheN8FDc8UiWA%2F2TTbCG%2F4x0AieGbQ3zDKpIuzBjqfAQ9S9e8jpgzjMM4GO8fqyObbWONrbklkDyiMiDCZOOaunx2i2DvZ7Jz7E0nGO7ToXwzAvEb1qeNQAWWeHe4OJ8kQOw0oV6dkS15ObZHKlJTPvPqXOtJ5axP409KVnnzrPwTUqG0BAp4fCR5z%2BmOC1LkbjJo94AEhljmi8ewd5B9JkISrn1NJTHK9xT6SkucR8u92uqwUiyvbdfXOyRKRBw%3D%3D&X-Amz-Signature=c66d44b3afd56837ce20087b5f14f8674da5bdc60f52adf3c2fd7e7e54943abd&X-Amz-SignedHeaders=host"
-            },
-            {
-                "date": "2023-02-22T00:00:00.000Z",
-                "status": "PROCESSED",
-                "link": "https://digi-data-v1.s3.eu-central-1.amazonaws.com/partial-dr/16ecf247-3e11-43b9-add1-407771f2c7b5/5fb2d945-adc2-41e0-9a26-d5ef0613cc43/32TMK/2023-02-22_MS.tif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAZG6BNOQIGMVWC5LP%2F20240607%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20240607T092647Z&X-Amz-Expires=604800&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGIaDGV1LWNlbnRyYWwtMSJGMEQCICOLZjM%2FXryqUjH%2FUn68leQnAGSCDQDobAN5T%2BdLyAdtAiBpEnGfuBjEsPGL2yn1RvT1yuH%2FqTEcsRppMVLNNdGNMCq%2FAwjr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAIaDDYzMzM3NjQzNzI2NCIMotLmGKnY5s8GbfwZKpMDfUUa8tafcuQ3godhmP%2BdKnRKCYleRe6y%2BZkJq%2FFuRYNdEQQ1kiWW4EQgHNgExZqMrciLjNZfInXNR8VVa1bg2ZKPqtIMow%2F2OkpMzJV95NBqKvVauaUIqpQuVbtX1iThKzk%2FE6CO3xRLkc6hFiSHzuZ5kDfBu2xjbe8zitoZkChnW2Ret3ZMf6aLbexL0MIvyrn0oZcXPQhEXtERiuSiqagrQ3Df6lAsCpbSleqevgXerTpCPByzR0EVDwoJpJrTHZkz5EKxlTmrNdg2FLJbiIb%2Fa5F0dKnSvKbLt4dI2iAzM1e12V7mizQ7dMmHYk513HQ7SKS3PX8AgqDi0JlXCZmg5t6kSzoyqHFRAT2d8zCUHV0sh%2BNAhsKWpFoFkJni2x01LUBEpBm4H7FbQUB%2B39cwZlXjfOBtsF%2FiCDR7kp6zbthBGo5ysdHELntKRfy8TuQUPoLhLN%2F98xAM7ImfmuGw76sn6K%2FZsvczSaSZK9c%2FGvFyOEcdqunxgpBheN8FDc8UiWA%2F2TTbCG%2F4x0AieGbQ3zDKpIuzBjqfAQ9S9e8jpgzjMM4GO8fqyObbWONrbklkDyiMiDCZOOaunx2i2DvZ7Jz7E0nGO7ToXwzAvEb1qeNQAWWeHe4OJ8kQOw0oV6dkS15ObZHKlJTPvPqXOtJ5axP409KVnnzrPwTUqG0BAp4fCR5z%2BmOC1LkbjJo94AEhljmi8ewd5B9JkISrn1NJTHK9xT6SkucR8u92uqwUiyvbdfXOyRKRBw%3D%3D&X-Amz-Signature=bc2eba998d65b51a4d5c0827d51269e8089abac22f114d8fcdbca13c38987724&X-Amz-SignedHeaders=host"
-            },
-            {
-                "date": "2023-01-28T00:00:00.000Z",
-                "status": "PROCESSED",
-                "link": "https://digi-data-v1.s3.eu-central-1.amazonaws.com/partial-dr/16ecf247-3e11-43b9-add1-407771f2c7b5/5fb2d945-adc2-41e0-9a26-d5ef0613cc43/32TMK/2023-01-28_MS.tif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAZG6BNOQIGMVWC5LP%2F20240607%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20240607T092647Z&X-Amz-Expires=604800&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGIaDGV1LWNlbnRyYWwtMSJGMEQCICOLZjM%2FXryqUjH%2FUn68leQnAGSCDQDobAN5T%2BdLyAdtAiBpEnGfuBjEsPGL2yn1RvT1yuH%2FqTEcsRppMVLNNdGNMCq%2FAwjr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAIaDDYzMzM3NjQzNzI2NCIMotLmGKnY5s8GbfwZKpMDfUUa8tafcuQ3godhmP%2BdKnRKCYleRe6y%2BZkJq%2FFuRYNdEQQ1kiWW4EQgHNgExZqMrciLjNZfInXNR8VVa1bg2ZKPqtIMow%2F2OkpMzJV95NBqKvVauaUIqpQuVbtX1iThKzk%2FE6CO3xRLkc6hFiSHzuZ5kDfBu2xjbe8zitoZkChnW2Ret3ZMf6aLbexL0MIvyrn0oZcXPQhEXtERiuSiqagrQ3Df6lAsCpbSleqevgXerTpCPByzR0EVDwoJpJrTHZkz5EKxlTmrNdg2FLJbiIb%2Fa5F0dKnSvKbLt4dI2iAzM1e12V7mizQ7dMmHYk513HQ7SKS3PX8AgqDi0JlXCZmg5t6kSzoyqHFRAT2d8zCUHV0sh%2BNAhsKWpFoFkJni2x01LUBEpBm4H7FbQUB%2B39cwZlXjfOBtsF%2FiCDR7kp6zbthBGo5ysdHELntKRfy8TuQUPoLhLN%2F98xAM7ImfmuGw76sn6K%2FZsvczSaSZK9c%2FGvFyOEcdqunxgpBheN8FDc8UiWA%2F2TTbCG%2F4x0AieGbQ3zDKpIuzBjqfAQ9S9e8jpgzjMM4GO8fqyObbWONrbklkDyiMiDCZOOaunx2i2DvZ7Jz7E0nGO7ToXwzAvEb1qeNQAWWeHe4OJ8kQOw0oV6dkS15ObZHKlJTPvPqXOtJ5axP409KVnnzrPwTUqG0BAp4fCR5z%2BmOC1LkbjJo94AEhljmi8ewd5B9JkISrn1NJTHK9xT6SkucR8u92uqwUiyvbdfXOyRKRBw%3D%3D&X-Amz-Signature=2063af4c6829b2c1ae34f030e24acb19f04fb4e5f4e9d85de38a55ec07ceca36&X-Amz-SignedHeaders=host"
-            }
+                {
+                    "date": "2023-03-14T00:00:00.000Z",
+                    "status": "PROCESSED",
+                    "link": "https://digi-data-v1.s3.eu-central-1.amazonaws.com/partial-dr/16ecf247-3e11-43b9-add1-407771f2c7b5/5fb2d945-adc2-41e0-9a26-d5ef0613cc43/32TMK/2023-03-14_MS.tif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAZG6BNOQIGMVWC5LP%2F20240607%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20240607T092647Z&X-Amz-Expires=604800&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGIaDGV1LWNlbnRyYWwtMSJGMEQCICOLZjM%2FXryqUjH%2FUn68leQnAGSCDQDobAN5T%2BdLyAdtAiBpEnGfuBjEsPGL2yn1RvT1yuH%2FqTEcsRppMVLNNdGNMCq%2FAwjr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAIaDDYzMzM3NjQzNzI2NCIMotLmGKnY5s8GbfwZKpMDfUUa8tafcuQ3godhmP%2BdKnRKCYleRe6y%2BZkJq%2FFuRYNdEQQ1kiWW4EQgHNgExZqMrciLjNZfInXNR8VVa1bg2ZKPqtIMow%2F2OkpMzJV95NBqKvVauaUIqpQuVbtX1iThKzk%2FE6CO3xRLkc6hFiSHzuZ5kDfBu2xjbe8zitoZkChnW2Ret3ZMf6aLbexL0MIvyrn0oZcXPQhEXtERiuSiqagrQ3Df6lAsCpbSleqevgXerTpCPByzR0EVDwoJpJrTHZkz5EKxlTmrNdg2FLJbiIb%2Fa5F0dKnSvKbLt4dI2iAzM1e12V7mizQ7dMmHYk513HQ7SKS3PX8AgqDi0JlXCZmg5t6kSzoyqHFRAT2d8zCUHV0sh%2BNAhsKWpFoFkJni2x01LUBEpBm4H7FbQUB%2B39cwZlXjfOBtsF%2FiCDR7kp6zbthBGo5ysdHELntKRfy8TuQUPoLhLN%2F98xAM7ImfmuGw76sn6K%2FZsvczSaSZK9c%2FGvFyOEcdqunxgpBheN8FDc8UiWA%2F2TTbCG%2F4x0AieGbQ3zDKpIuzBjqfAQ9S9e8jpgzjMM4GO8fqyObbWONrbklkDyiMiDCZOOaunx2i2DvZ7Jz7E0nGO7ToXwzAvEb1qeNQAWWeHe4OJ8kQOw0oV6dkS15ObZHKlJTPvPqXOtJ5axP409KVnnzrPwTUqG0BAp4fCR5z%2BmOC1LkbjJo94AEhljmi8ewd5B9JkISrn1NJTHK9xT6SkucR8u92uqwUiyvbdfXOyRKRBw%3D%3D&X-Amz-Signature=c66d44b3afd56837ce20087b5f14f8674da5bdc60f52adf3c2fd7e7e54943abd&X-Amz-SignedHeaders=host"
+                },
+                {
+                    "date": "2023-02-22T00:00:00.000Z",
+                    "status": "PROCESSED",
+                    "link": "https://digi-data-v1.s3.eu-central-1.amazonaws.com/partial-dr/16ecf247-3e11-43b9-add1-407771f2c7b5/5fb2d945-adc2-41e0-9a26-d5ef0613cc43/32TMK/2023-02-22_MS.tif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAZG6BNOQIGMVWC5LP%2F20240607%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20240607T092647Z&X-Amz-Expires=604800&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGIaDGV1LWNlbnRyYWwtMSJGMEQCICOLZjM%2FXryqUjH%2FUn68leQnAGSCDQDobAN5T%2BdLyAdtAiBpEnGfuBjEsPGL2yn1RvT1yuH%2FqTEcsRppMVLNNdGNMCq%2FAwjr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAIaDDYzMzM3NjQzNzI2NCIMotLmGKnY5s8GbfwZKpMDfUUa8tafcuQ3godhmP%2BdKnRKCYleRe6y%2BZkJq%2FFuRYNdEQQ1kiWW4EQgHNgExZqMrciLjNZfInXNR8VVa1bg2ZKPqtIMow%2F2OkpMzJV95NBqKvVauaUIqpQuVbtX1iThKzk%2FE6CO3xRLkc6hFiSHzuZ5kDfBu2xjbe8zitoZkChnW2Ret3ZMf6aLbexL0MIvyrn0oZcXPQhEXtERiuSiqagrQ3Df6lAsCpbSleqevgXerTpCPByzR0EVDwoJpJrTHZkz5EKxlTmrNdg2FLJbiIb%2Fa5F0dKnSvKbLt4dI2iAzM1e12V7mizQ7dMmHYk513HQ7SKS3PX8AgqDi0JlXCZmg5t6kSzoyqHFRAT2d8zCUHV0sh%2BNAhsKWpFoFkJni2x01LUBEpBm4H7FbQUB%2B39cwZlXjfOBtsF%2FiCDR7kp6zbthBGo5ysdHELntKRfy8TuQUPoLhLN%2F98xAM7ImfmuGw76sn6K%2FZsvczSaSZK9c%2FGvFyOEcdqunxgpBheN8FDc8UiWA%2F2TTbCG%2F4x0AieGbQ3zDKpIuzBjqfAQ9S9e8jpgzjMM4GO8fqyObbWONrbklkDyiMiDCZOOaunx2i2DvZ7Jz7E0nGO7ToXwzAvEb1qeNQAWWeHe4OJ8kQOw0oV6dkS15ObZHKlJTPvPqXOtJ5axP409KVnnzrPwTUqG0BAp4fCR5z%2BmOC1LkbjJo94AEhljmi8ewd5B9JkISrn1NJTHK9xT6SkucR8u92uqwUiyvbdfXOyRKRBw%3D%3D&X-Amz-Signature=bc2eba998d65b51a4d5c0827d51269e8089abac22f114d8fcdbca13c38987724&X-Amz-SignedHeaders=host"
+                },
+                {
+                    "date": "2023-01-28T00:00:00.000Z",
+                    "status": "PROCESSED",
+                    "link": "https://digi-data-v1.s3.eu-central-1.amazonaws.com/partial-dr/16ecf247-3e11-43b9-add1-407771f2c7b5/5fb2d945-adc2-41e0-9a26-d5ef0613cc43/32TMK/2023-01-28_MS.tif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAZG6BNOQIGMVWC5LP%2F20240607%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20240607T092647Z&X-Amz-Expires=604800&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGIaDGV1LWNlbnRyYWwtMSJGMEQCICOLZjM%2FXryqUjH%2FUn68leQnAGSCDQDobAN5T%2BdLyAdtAiBpEnGfuBjEsPGL2yn1RvT1yuH%2FqTEcsRppMVLNNdGNMCq%2FAwjr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAIaDDYzMzM3NjQzNzI2NCIMotLmGKnY5s8GbfwZKpMDfUUa8tafcuQ3godhmP%2BdKnRKCYleRe6y%2BZkJq%2FFuRYNdEQQ1kiWW4EQgHNgExZqMrciLjNZfInXNR8VVa1bg2ZKPqtIMow%2F2OkpMzJV95NBqKvVauaUIqpQuVbtX1iThKzk%2FE6CO3xRLkc6hFiSHzuZ5kDfBu2xjbe8zitoZkChnW2Ret3ZMf6aLbexL0MIvyrn0oZcXPQhEXtERiuSiqagrQ3Df6lAsCpbSleqevgXerTpCPByzR0EVDwoJpJrTHZkz5EKxlTmrNdg2FLJbiIb%2Fa5F0dKnSvKbLt4dI2iAzM1e12V7mizQ7dMmHYk513HQ7SKS3PX8AgqDi0JlXCZmg5t6kSzoyqHFRAT2d8zCUHV0sh%2BNAhsKWpFoFkJni2x01LUBEpBm4H7FbQUB%2B39cwZlXjfOBtsF%2FiCDR7kp6zbthBGo5ysdHELntKRfy8TuQUPoLhLN%2F98xAM7ImfmuGw76sn6K%2FZsvczSaSZK9c%2FGvFyOEcdqunxgpBheN8FDc8UiWA%2F2TTbCG%2F4x0AieGbQ3zDKpIuzBjqfAQ9S9e8jpgzjMM4GO8fqyObbWONrbklkDyiMiDCZOOaunx2i2DvZ7Jz7E0nGO7ToXwzAvEb1qeNQAWWeHe4OJ8kQOw0oV6dkS15ObZHKlJTPvPqXOtJ5axP409KVnnzrPwTUqG0BAp4fCR5z%2BmOC1LkbjJo94AEhljmi8ewd5B9JkISrn1NJTHK9xT6SkucR8u92uqwUiyvbdfXOyRKRBw%3D%3D&X-Amz-Signature=2063af4c6829b2c1ae34f030e24acb19f04fb4e5f4e9d85de38a55ec07ceca36&X-Amz-SignedHeaders=host"
+                }
             ]
         },
         "version": "v1.0",
@@ -338,6 +339,55 @@ curl -X GET "https://api.digifarm.io/deep-resolution/status/5fb2d945-adc2-41e0-9
     }
 ```
 
+
+### POST /deep-resolution/cancel/{job_id}
+
+This endpoint provides the ability to cancel any image requests.
+
+#### Request URL `POST https://api.digifarm.io/deep-resolution/cancel/{job_id}`
+
+**Method**: POST
+
+#### **Request Headers**
+
+```
+Content-Type: application/json
+
+client_token: \[string, required\] The client token for authorization.
+
+```
+
+**Example Request**
+
+```
+curl -X GET "https://api.digifarm.io/deep-resolution/cancel/5fb2d945-adc2-41e0-9a26-d5ef0613cc43" -H "client_token: ********************************"
+```
+
+**Response**
+
+*   `statusCode`: \[string\] The status of the request.
+
+*   `data`: \[object\] Dictionary contaning dates and job_id
+
+    *   `job_id`: \[string\] The job id.
+
+    *   `status`: \[string\] The status of job.
+
+*   `version`: \[string\] API version number
+
+*   `timestamp`: \[datetime\] The time of the initiated task.
+
+```json
+{
+    "statusCode": 200,
+    "data": {
+        "job_id": "5fb2d945-adc2-41e0-9a26-d5ef0613cc43",
+        "status": "CANCELLED"
+    },
+    "version": "v1.0",
+    "timestamp": "2025-01-23T12:15:43.221783"
+}
+```
 
 
 ### **Error Response**
