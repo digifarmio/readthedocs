@@ -187,6 +187,7 @@ Content-Type: application/json
 *   `dates`: \[list of string, optional\] The dates to use for processing the area of interest.
 
 **_IMPORTANT:_** 
+
 * At least dates is required, or, alternatively, end_date.
 * If start_date and end_date are provided, all available dates in between will be processed.
 * If any future date provide as `end_date`, automatically image will process after every `interval` day based on the cloud cover.
